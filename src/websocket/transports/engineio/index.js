@@ -128,7 +128,9 @@ module.exports = function(ss, messageEmitter, httpServer, config){
           var response = 'OK';
           if(content === 'null') {
             socket.sessionId = connect.utils.uid(24);
-            response = socket.sessionId;
+
+				// send back the newly generated session id, and cookie expiration date
+            response = socket.sessionId + '.' + (ss.session.options.maxAge || 0);
             console.log('Generated new session id for client via websocket: ' + socket.sessionId);
           } else {
             // Set the sessionId against this socket and tell the client we're ready for requests
@@ -137,7 +139,8 @@ module.exports = function(ss, messageEmitter, httpServer, config){
           }
           
           ss.session.find(socket.sessionId, socket.id, function(session){
-            socket.send('X|'+response);
+            // send back either an OK or a session id
+            socket.send('X|' + response);
           });
 
         // Otherwise go ahead and process a regular incoming message
