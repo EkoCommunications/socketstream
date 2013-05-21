@@ -1,6 +1,7 @@
 // Engine.IO server-side wrapper
 
 var fs = require('fs'),
+    connect = require('connect'),
     engine = require('engine.io');
 
 var openSocketsById = {};
@@ -124,12 +125,19 @@ module.exports = function(ss, messageEmitter, httpServer, config){
         // If this responderId is 'X', assume this is a system message
         if (responderId === 'X') {
 
-          // Set the sessionId against this socket and tell the client we're ready for requests
-          var rawSessionId = content.split('.')[0];
-          socket.sessionId = rawSessionId.split(':')[1].replace(/\s/g, '+');
+          var response = 'OK';
+          if(content === 'null') {
+            socket.sessionId = connect.utils.uid(24);
+            response = socket.sessionId;
+            console.log('Generated new session id for client via websocket: ' + socket.sessionId);
+          } else {
+            // Set the sessionId against this socket and tell the client we're ready for requests
+            var rawSessionId = content.split('.')[0];
+            socket.sessionId = rawSessionId.split(':')[1].replace(/\s/g, '+');
+          }
           
           ss.session.find(socket.sessionId, socket.id, function(session){
-            socket.send('X|OK');
+            socket.send('X|'+response);
           });
 
         // Otherwise go ahead and process a regular incoming message
