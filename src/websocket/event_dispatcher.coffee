@@ -32,6 +32,17 @@ sendToMultiple = (send, msg, destinations, type) ->
   destinations.forEach (destination) ->
     set = subscriptions[type]
     if socketIds = set.members(destination)
-      socketIds.slice(0).forEach (socketId) ->
+
+      socketIdsToSend = socketIds.slice(0)
+
+      # check if 'exclude_id' variable is present
+      if msg.indexOf('exclude_id')
+        data = JSON.parse msg
+        
+        index = socketIdsToSend.indexOf(data.p[1].exclude_id)
+        if index != -1
+          socketIdsToSend.splice(index)
+
+      socketIdsToSend.forEach (socketId) ->
         set.removeFromAll(socketId) unless send.socketId(socketId, msg, destination)
   true
