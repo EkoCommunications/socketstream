@@ -36,12 +36,13 @@ sendToMultiple = (send, msg, destinations, type) ->
       socketIdsToSend = socketIds.slice(0)
 
       # check if 'exclude_id' variable is present
-      if msg.indexOf('exclude_id')
+      if msg.indexOf('exclude_id') >= 0
         data = JSON.parse msg
         
         # remove excluded socket Id from list
-        index = socketIdsToSend.indexOf(data.p[1].exclude_id)
-        if index != -1
+        excludeId = data.p[data.p.length-1].exclude_id
+        index = socketIdsToSend.indexOf(excludeId)
+        if index >= 0
           socketIdsToSend.splice(index, 1)
 
       socketIdsToSend.forEach (socketId) ->
