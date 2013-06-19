@@ -86,8 +86,8 @@ module.exports = function(ss, messageEmitter, httpServer, config){
   var code = fs.readFileSync(__dirname + '/wrapper.js', 'utf8');
   ss.client.send('mod', 'socketstream-transport', code);
 
-  // Tell the SocketStream client to use this transport, passing any client-side config along to the wrapper
-  ss.client.send('code', 'transport', "require('socketstream').assignTransport(" + JSON.stringify(config.client) + ");");
+  //  Pass any client-side config along to the wrapper
+  ss.client.send('code', 'transport', "require('socketstream').config = " + JSON.stringify(config.client) + ";");
 
   // Create a new Engine.IO server and bind to /ws
   var ws = engine.attach(httpServer, config.server);

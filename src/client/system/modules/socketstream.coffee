@@ -25,7 +25,7 @@ exports.registerApi = (name, fn) ->
     exports[name] = fn
 
 exports.send = (responderId) ->
-  (msg) -> transport.send(responderId + '|' + msg)
+  (msg) -> transport and transport.send(responderId + '|' + msg)
 
 
 ### ON DEMAND LOADING ###
