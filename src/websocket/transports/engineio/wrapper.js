@@ -13,6 +13,7 @@ module.exports = function(serverStatus, message, config){
   return {
     connect: function(){
       var sock = new eio.Socket(config);
+		var opened = false;
 
       sock.onopen = function() {
         var sessionId = Cookies.get('connect.sid') || Cookies.get('socket.sid');
@@ -23,7 +24,17 @@ module.exports = function(serverStatus, message, config){
 			 // send null session ID to tell server that it needs to generate a new one
           sock.send('X|null');
         }
+		  // set opened flag
+		  opened = true;
       };
+
+		// set 3 seconds timeout for socket to open
+		setTimeout(function() {
+			if(!opened) {
+				// close socket, will automatically emit disconnect
+				sock.close();
+			}
+		}, 2500);
      
       sock.onmessage = function(e) {
 
