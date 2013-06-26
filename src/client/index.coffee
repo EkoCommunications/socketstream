@@ -80,7 +80,7 @@ module.exports = (ss, router) ->
     # errors with its own custom error handling code, step in and prevent any exceptions from taking the server down
     if options.packedAssets && process.listeners('uncaughtException').length == 0
       process.on 'uncaughtException', (err) ->
-        console.log('Uncaught Exception!'.red)
+        console.log('Uncaught Exception! '.red + err.message)
         console.error(err.stack)
 
   # Define a new Single Page Client
