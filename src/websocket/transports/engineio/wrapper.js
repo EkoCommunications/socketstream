@@ -16,7 +16,7 @@ module.exports = function(serverStatus, message, config){
     var opened = false;
 
       sock.onopen = function() {
-        var sessionId = Cookies.get('connect.sid') || Cookies.get('socket.sid');
+        var sessionId = Cookies.get('connect.sid') || Cookies.get('socket.sid') || localStorage['socket.sid'];
         if (sessionId) {
           sock.send('X|' + sessionId);
         } else{
@@ -55,7 +55,10 @@ module.exports = function(serverStatus, message, config){
           // if it's not the standard ok response, then it must be a socket session id
           if(content !== 'OK') {
             var c = content.split('.');
-            Cookies.set('socket.sid', 's:' + c[0] + '.e', {expires: c[1]/1000});
+            var sid = 's:' + c[0] + '.e';
+
+            Cookies.set('socket.sid', sid, {expires: c[1]/1000});
+            localStorage.setItem('socket.sid', sid);
           }
               break;
 
@@ -119,22 +122,20 @@ Cookies.defaults = {
 };
 
 Cookies.get = function (key) {
-    // if (Cookies._cachedDocumentCookie !== Cookies._document.cookie) {
-    //     Cookies._renewCache();
-    // }
+    if (Cookies._cachedDocumentCookie !== Cookies._document.cookie) {
+        Cookies._renewCache();
+    }
 
-    // return Cookies._cache[key];
-    return localStorage.getItem(key);
+    return Cookies._cache[key];
 };
 
 Cookies.set = function (key, value, options) {
-    // options = Cookies._getExtendedOptions(options);
-    // options.expires = Cookies._getExpiresDate(value === undefined ? -1 : options.expires);
+    options = Cookies._getExtendedOptions(options);
+    options.expires = Cookies._getExpiresDate(value === undefined ? -1 : options.expires);
 
-    // Cookies._document.cookie = Cookies._generateCookieString(key, value, options);
+    Cookies._document.cookie = Cookies._generateCookieString(key, value, options);
 
-    // return Cookies;
-    return localStorage.setItem(key, value);
+    return Cookies;
 
 };
 
