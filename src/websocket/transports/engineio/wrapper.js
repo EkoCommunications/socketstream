@@ -16,7 +16,7 @@ module.exports = function(serverStatus, message, config){
     var opened = false;
 
       sock.onopen = function() {
-        var sessionId = Cookies.get('connect.sid') || Cookies.get('socket.sid') || localStorage['socket.sid'];
+        var sessionId = Cookies.get('connect.sid') || Cookies.get('connect.sid') || localStorage['connect.sid'];
         if (sessionId) {
           sock.send('X|' + sessionId);
         } else{
@@ -57,8 +57,8 @@ module.exports = function(serverStatus, message, config){
             var c = content.split('.');
             var sid = 's:' + c[0] + '.e';
 
-            Cookies.set('socket.sid', sid, {expires: c[1]/1000});
-            localStorage.setItem('socket.sid', sid);
+            Cookies.set('connect.sid', sid, {expires: c[1]/1000});
+            localStorage.setItem('connect.sid', sid);
           }
               break;
 
