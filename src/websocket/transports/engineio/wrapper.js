@@ -20,7 +20,7 @@ module.exports = function(serverStatus, message, config){
         if (sessionId && sessionId != "undefined") {
           sock.send('X|' + sessionId);
 			  // make sure local storage is always synced up
-			  localStorage.setItem('connect.sid');
+			  localStorage.setItem('connect.sid', sessionId);
         } else{
           console.warn('Unable to obtain session ID');
 			 // send null session ID to tell server that it needs to generate a new one
